@@ -1,21 +1,24 @@
 import express from "express";
 import socket from "socket.io";
 import cors from 'cors';
-
-const io = new socket.Server();
-io.on("connection", socket => {
-	socket.emit("hi");
-});
+import apiRouter from "./routes/api.routes"
 
 export const app = express();
 
 // MIDDLEWARE
 app.use(cors());
 
-app.get("/api", (_req, res) => {
-	res.status(200).send("Hello, world!");
-});
+app.use("/api", apiRouter);
 
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
 	console.log(`Server listening on port 3000`);
 })
+
+const io = new socket.Server(server);
+io.on("connection", socket => {
+	socket.send("hi");
+
+	setTimeout(() => {
+		io.emit("message", "you are a great person")
+	}, 5000)
+});

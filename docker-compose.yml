@@ -28,7 +28,7 @@ services:
       context: ./src/nginx
     container_name: wbc_nginx
     ports:
-      - 8080:80
+      - 80:80
     networks:
       - app-network
     depends_on:
