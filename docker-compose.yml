@@ -1,0 +1,40 @@
+services:
+  frontend:
+    build:
+      context: ./src/frontend
+    container_name: wbc_frontend
+    volumes:
+      - ./src/frontend:/frontend
+      - /frontend/node_modules
+    networks:
+      - app-network
+    ports:
+      - 5000:5000
+    command: npm run dev
+  backend:
+    build:
+      context: ./src/backend
+    container_name: wbc_backend
+    volumes:
+      - ./src/backend:/backend
+      - /backend/node_modules
+    networks:
+      - app-network
+    ports:
+      - 3000:3000
+    command: npm run dev
+  nginx:
+    build:
+      context: ./src/nginx
+    container_name: wbc_nginx
+    ports:
+      - 8080:80
+    networks:
+      - app-network
+    depends_on:
+      - backend
+      - frontend
+
+networks:
+  app-network:
+    driver: bridge
