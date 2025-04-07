@@ -19,7 +19,9 @@ export default defineConfig({
     ],
     hmr: {
       protocol: "ws",
-    }
+      clientPort: 5000,
+    },
+    strictPort: true,
   },
   resolve: {
     alias: {

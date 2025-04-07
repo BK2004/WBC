@@ -2,7 +2,7 @@ services:
   frontend:
     build:
       context: .
-      target: wbc-frontend
+      target: wbc-frontend-dev
     container_name: wbc_frontend
     volumes:
       - ./src/frontend:/frontend
@@ -15,7 +15,7 @@ services:
   backend:
     build:
       context: .
-      target: wbc-backend
+      target: wbc-backend-dev
     container_name: wbc_backend
     volumes:
       - ./src/backend:/backend
