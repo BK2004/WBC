@@ -1,47 +1,64 @@
 import express from "express";
 import socket from "socket.io";
 import cors from 'cors';
-import apiRouter from "./routes/api.routes"
+import apiRouter from "./routes/api.routes";
+import process from "process";
+import { config } from "dotenv";
 import { 
-	isCameraActive, 
+	PiCamera,
 	processFrame, 
-	startCamera, 
-	stopCamera, 
-	StreamCamera 
 } from "./services/camera";
 
+// configure environment variables
+config({
+	path: __dirname.substring(0, __dirname.indexOf("backend") + 7) + "/.env"
+});
+
+console.log(process.env.NODE_ENV);
+
 export const app = express();
+export const picam = new PiCamera({});
+export const PORT = process.env.NODE_ENV === "development" ? 3000 : 80;
 
 // MIDDLEWARE
 app.use(cors());
 
 app.use("/api", apiRouter);
 
-const server = app.listen(3000, () => {
-	console.log(`Server listening on port 3000`);
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(__dirname + "/../../frontend/dist"));
+}
+
+const server = app.listen(PORT, () => {
+	console.log(`Server listening on port ${PORT}`);
 })
 
-const io = new socket.Server(server, {
+const io = process.env.NODE_ENV === "production" ? new socket.Server(server) : new socket.Server(server, {
 	cors: {
 		origin: "*"
 	}
 });
+
 io.on("connection", socket => {
 	console.log(`Connected to ${socket.handshake.address}.`);
 
-	// if (!isCameraActive()) {
-	// 	startCamera();
-	// }
+	if (!picam.isActive()) {
+		picam.activate()
+			.then(() => {})
+			.catch((e) => {
+				console.log("Failed to start camera... Are you sure your camera and/or rpicam-tools are installed correctly?");
+			})
+	}
 });
 
 io.on("disconnect", socket => {
 	console.log(`Disconnected from ${socket.handshake.address}.`);
 
-	// if (isCameraActive() && io.engine.clientsCount == 0) {
-	// 	stopCamera();
-	// }
+	if (picam.isActive() && io.engine.clientsCount == 0) {
+		picam.deactivate();
+	}
 })
 
-// StreamCamera.on('frame', (data) => {
-// 	io.emit("consume_stream", processFrame(data));
-// })
+picam.on('frame', (data) => {
+	io.emit("consume_stream", processFrame(data));
+})
