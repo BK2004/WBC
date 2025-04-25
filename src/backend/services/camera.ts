@@ -32,7 +32,7 @@ export class PiCamera extends EventEmitter {
                 `--width=${this.options.width || 1280}`,
                 `--height=${this.options.height || 720}`,
 
-                "--no-preview",
+                "--nopreview",
             ])
 
             // Resolve once camera process gives data

@@ -25,7 +25,7 @@ app.use(cors());
 
 app.use("/api", apiRouter);
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "development") {
 	app.use(express.static(__dirname + "/../../frontend/dist"));
 }
 
@@ -33,7 +33,7 @@ const server = app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}`);
 })
 
-const io = process.env.NODE_ENV === "production" ? new socket.Server(server) : new socket.Server(server, {
+const io = process.env.NODE_ENV !== "development" ? new socket.Server(server) : new socket.Server(server, {
 	cors: {
 		origin: "*"
 	}
