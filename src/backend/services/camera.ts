@@ -36,6 +36,14 @@ export class PiCamera extends EventEmitter {
                 "-v",
                 "0",
 
+                /* No timeout */
+                "-t",
+                "0",
+
+                /* use MJPEG */
+                "--codec",
+                "mjpeg",
+
                 "--nopreview",
             ])
 
