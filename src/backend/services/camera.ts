@@ -32,6 +32,10 @@ export class PiCamera extends EventEmitter {
                 `--width=${this.options.width || 1280}`,
                 `--height=${this.options.height || 720}`,
 
+                /* Verbosity */
+                "-v",
+                "0",
+
                 "--nopreview",
             ])
 
