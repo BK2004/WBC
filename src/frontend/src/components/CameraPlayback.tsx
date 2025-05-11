@@ -35,6 +35,7 @@ export default function CameraPlayback(props: Props) {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
             socket.off('connect_error', onConnectError);
+            socket.off('consume_stream', onConsumeStream);
         }
     }, []);
 
